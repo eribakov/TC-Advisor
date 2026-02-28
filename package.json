@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/eribakov/TC-Advisor/issues"
   },
-  "homepage": "https://github.com/eribakov/TC-Advisor#readme"
+  "homepage": "https://github.com/eribakov/TC-Advisor#readme",
+  "dependencies": {
+    "@google/genai": "^1.43.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "vite": "^7.3.1"
+  }
 }

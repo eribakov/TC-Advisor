@@ -8,6 +8,7 @@
     pageContext: document.getElementById('page-context'),
     currentDomain: document.getElementById('current-domain'),
     btnScan: document.getElementById('btn-scan'),
+    scanStatus: document.getElementById('scan-status'),
     adviceBefore: document.getElementById('advice-before'),
     placeholderBefore: document.getElementById('placeholder-before'),
     adviceAfter: document.getElementById('advice-after'),
@@ -107,13 +108,28 @@
   }
 
   /**
-   * Scan button click — placeholder for future content script / analysis.
+   * Scan button click — message background to analyze page, then show response and advice.
    */
   async function onScanClick() {
+    if (DOM.scanStatus) DOM.scanStatus.textContent = '';
     setScanning(true);
     try {
-      // TODO: message background or content script to analyze page, then call setAdvice with results
-      await new Promise((r) => setTimeout(r, 600));
+      const tab = await getCurrentTab();
+      const response = await new Promise((resolve) => {
+        chrome.runtime.sendMessage(
+          { action: 'callGemini', text: tab?.url ?? '', source: undefined },
+          resolve
+        );
+      });
+      if (response?.source) {
+        if (DOM.scanStatus) DOM.scanStatus.textContent = `✅ Found T&C from: ${response.source}`;
+      }
+      if (response?.result) {
+        // TODO: parse response.result and call setAdvice with before/after lists
+      }
+      if (!response?.result && !response?.error) showDefaultAdvice();
+      else if (response?.error) showDefaultAdvice();
+    } catch (e) {
       showDefaultAdvice();
     } finally {
       setScanning(false);

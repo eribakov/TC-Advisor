@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/eribakov/TC-Advisor/issues"
   },
-  "homepage": "https://github.com/eribakov/TC-Advisor#readme"
+  "homepage": "https://github.com/eribakov/TC-Advisor#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.1.37"
+  }
 }

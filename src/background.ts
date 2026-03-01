@@ -1,16 +1,10 @@
+import { scanTerms } from './analyzer';
 console.log("Background script running");
 
 async function callGemini(termsText: string, _source?: string): Promise<{ result?: string; error?: string; source?: string }> {
   try {
-    const response = await fetch('https://your-server.com/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: termsText }),
-    });
-
-    const data = await response.json();
-    if (data.error) return { error: data.error };
-    return { result: data.result, source: data.source };
+    const data = await scanTerms(termsText);
+    return { result: JSON.stringify(data) };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { error: 'Failed to reach server: ' + message };

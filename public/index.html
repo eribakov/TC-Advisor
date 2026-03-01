@@ -4,16 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>T&C Advisor</title>
+  <title>Tackl</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
   <header class="header">
     <div class="header__brand">
-      <span class="header__icon" aria-hidden="true">📋</span>
-      <h1 class="header__title">T&C Advisor</h1>
+      <img src = "icons/logo.svg" alt="Tackl logo" witdth = 32 height = 32>
+      <h1 class="header__title">Tackl</h1>
     </div>
-    <p class="header__tagline">Smart advice for subscription terms & conditions</p>
+    <p class="header__tagline">Tackling the fine print, one web page at a time.</p>
     <div class="header__context" id="page-context" data-state="idle">
       <span class="context__label">Current page</span>
       <span class="context__value" id="current-domain">—</span>
@@ -27,7 +28,7 @@
     <section class="section section--before" aria-labelledby="before-heading">
       <h2 id="before-heading" class="section__title">
         <span class="section__badge section__badge--before">Before</span>
-        Before you accept
+        Risks
       </h2>
       <p class="section__desc">Things to check or do before agreeing to terms on a subscription site.</p>
       <ul class="advice-list" id="advice-before" role="list">
@@ -40,9 +41,9 @@
     <section class="section section--after" aria-labelledby="after-heading">
       <h2 id="after-heading" class="section__title">
         <span class="section__badge section__badge--after">After</span>
-        After you accept
+        Ghost Mode
       </h2>
-      <p class="section__desc">Recommended actions once you’ve agreed to the terms.</p>
+      <p class="section__desc">Recommended actions once you've agreed to the terms.</p>
       <ul class="advice-list" id="advice-after" role="list">
         <li class="advice-list__placeholder" id="placeholder-after">Scan the page to get tailored advice, or browse
           general tips below.</li>

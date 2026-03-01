@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>T&C Advisor</title>
   <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
   <header class="header">
     <div class="header__brand">
@@ -16,8 +18,10 @@
     <div class="header__context" id="page-context" data-state="idle">
       <span class="context__label">Current page</span>
       <span class="context__value" id="current-domain">—</span>
-      <button type="button" class="btn btn--primary" id="btn-scan" aria-label="Scan this page for terms">Scan this page</button>
+      <button type="button" class="btn btn--primary" id="btn-scan" aria-label="Scan this page for terms">Scan this
+        page</button>
     </div>
+    <p class="header__status" id="scan-status" aria-live="polite"></p>
   </header>
 
   <main class="main">
@@ -28,7 +32,8 @@
       </h2>
       <p class="section__desc">Things to check or do before agreeing to terms on a subscription site.</p>
       <ul class="advice-list" id="advice-before" role="list">
-        <li class="advice-list__placeholder" id="placeholder-before">Scan the page to get tailored advice, or browse general tips below.</li>
+        <li class="advice-list__placeholder" id="placeholder-before">Scan the page to get tailored advice, or browse
+          general tips below.</li>
         <!-- Dynamic advice items will be injected here -->
       </ul>
     </section>
@@ -40,7 +45,8 @@
       </h2>
       <p class="section__desc">Recommended actions once you’ve agreed to the terms.</p>
       <ul class="advice-list" id="advice-after" role="list">
-        <li class="advice-list__placeholder" id="placeholder-after">Scan the page to get tailored advice, or browse general tips below.</li>
+        <li class="advice-list__placeholder" id="placeholder-after">Scan the page to get tailored advice, or browse
+          general tips below.</li>
         <!-- Dynamic advice items will be injected here -->
       </ul>
     </section>
@@ -53,4 +59,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>

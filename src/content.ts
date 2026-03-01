@@ -1,13 +1,3 @@
-// Chrome extension API (global in content script; avoids needing @types/chrome)
-declare const chrome: {
-  runtime: {
-    sendMessage: (msg: unknown, callback?: (response?: unknown) => void) => void;
-    onMessage: {
-      addListener: (fn: (msg: unknown, sender: unknown, sendResponse: (response?: unknown) => void) => boolean) => void;
-    };
-  };
-};
-
 // ============================================
 // TYPES
 // ============================================

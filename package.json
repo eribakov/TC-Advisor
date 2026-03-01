@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build",
+    "build": "BUILD_ENTRY=content vite build && BUILD_ENTRY=background vite build",
     "preview": "vite preview"
   },
   "repository": {
@@ -21,13 +21,12 @@
     "url": "https://github.com/eribakov/TC-Advisor/issues"
   },
   "homepage": "https://github.com/eribakov/TC-Advisor#readme",
-
   "dependencies": {
     "@google/genai": "^1.43.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.1.37",
     "@vitejs/plugin-react": "^5.1.4",
-    "vite": "^7.3.1",
-    "@types/chrome": "^0.1.37"
+    "vite": "^7.3.1"
   }
 }

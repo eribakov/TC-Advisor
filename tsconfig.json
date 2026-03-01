@@ -6,7 +6,8 @@
     "strict": true,
     "outDir": "./dist",
     "skipLibCheck": true,
-    "moduleResolution": "bundler"
-  },
-  "include": ["src/**/*.ts"]
+    "moduleResolution": "bundler",
+    "types": ["chrome"]
+    },
+    "include": ["src/**/*.ts"]
 }

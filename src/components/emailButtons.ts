@@ -1,35 +1,41 @@
 import { handleDeleteAccount, handleOptOut } from '../analyzer';
 
 export function showEmailButtons(analysis: any, companyName: string) {
-  const userInfo = {
-    companyName,
-    userName: "PLACEHOLDER",      // replace with real input later
-    userEmail: "PLACEHOLDER@email.com" // replace with real input later
-  };
 
-  // Create buttons container
+  // Don't add buttons twice if already exists
+  if (document.getElementById('email-buttons')) return;
+
   const container = document.createElement('div');
   container.id = 'email-buttons';
 
-  // Delete account button
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = 'Delete My Account & Data';
-  deleteBtn.addEventListener('click', async () => {
-    const email = await handleDeleteAccount(analysis, userInfo);
-    window.open(`mailto:?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
-  });
+  // Input form + buttons
+  container.innerHTML = `
+    <div id="user-info-form">
+      <input id="input-name" type="text" placeholder="Your full name" />
+      <input id="input-email" type="email" placeholder="Your email" />
+      <button id="deleteBtn">Delete My Account & Data</button>
+      <button id="optOutBtn">Opt Out of Data Sharing</button>
+    </div>
+  `;
 
-  // Opt out button
-  const optOutBtn = document.createElement('button');
-  optOutBtn.textContent = 'Opt Out of Data Sharing';
-  optOutBtn.addEventListener('click', async () => {
-    const email = await handleOptOut(analysis, userInfo);
-    window.open(`mailto:?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
-  });
-
-  container.appendChild(deleteBtn);
-  container.appendChild(optOutBtn);
-
-  // Inject into popup
   document.body.appendChild(container);
+
+  // Helper to get user info from inputs
+  function getUserInfo() {
+    return {
+      companyName,
+      userName: (document.getElementById('input-name') as HTMLInputElement).value || 'Unknown',
+      userEmail: (document.getElementById('input-email') as HTMLInputElement).value || 'Unknown',
+    };
+  }
+
+  document.getElementById('deleteBtn')?.addEventListener('click', async () => {
+    const email = await handleDeleteAccount(analysis, getUserInfo());
+    window.open(`mailto:${analysis.optOutEmail}?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
+  });
+
+  document.getElementById('optOutBtn')?.addEventListener('click', async () => {
+    const email = await handleOptOut(analysis, getUserInfo());
+    window.open(`mailto:${analysis.optOutEmail}?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
+  });
 }

@@ -2,6 +2,7 @@
  * T&C Advisor — Popup script
  * Handles current tab context, scan action, and advice list hooks for future features.
  */
+import { showEmailButtons } from './components/emailButtons';
 
 (function () {
   const DOM = {
@@ -155,6 +156,9 @@
         setAdvice('after', items);
       }
       if (!data?.risks?.length && !data?.ghostMode?.length) showDefaultAdvice();
+
+      showEmailButtons(data, DOM.currentDomain.textContent ?? "Unknown");
+
     } catch {
       setAdvice('before', [String(result || 'Analysis complete.')]);
       showDefaultAdvice();

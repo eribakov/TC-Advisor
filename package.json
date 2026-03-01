@@ -21,7 +21,6 @@
     "url": "https://github.com/eribakov/TC-Advisor/issues"
   },
   "homepage": "https://github.com/eribakov/TC-Advisor#readme",
-
   "dependencies": {
     "@google/genai": "^1.43.0"
   },

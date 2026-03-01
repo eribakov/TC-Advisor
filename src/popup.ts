@@ -2,6 +2,7 @@
  * T&C Advisor — Popup script
  * Handles current tab context, scan action, and advice list hooks for future features.
  */
+import '../public/popup.css';
 import { showEmailButtons } from './components/emailButtons';
 
 (function () {

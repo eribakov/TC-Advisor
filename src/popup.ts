@@ -175,8 +175,7 @@ else if ((response as any)?.error) {
    * Settings — placeholder for future options page or popup panel.
    */
   function onSettingsClick() {
-    // TODO: open options page or in-popup settings
-    console.log('Settings clicked');
+    chrome.runtime.openOptionsPage();
   }
 
   function init() {

@@ -1,6 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyDivzFhkaQ4U3Yk2k4lCfBh7aXmCcBO7TY" })
+async function getAI() {
+  return new Promise<GoogleGenAI>((resolve) => {
+    chrome.storage.local.get('geminiApiKey', (result) => {
+      resolve(new GoogleGenAI({ apiKey: result.geminiApiKey as string }));
+    });
+  });
+}
 
 const OPT_OUT_SYSTEM_INSTRUCTION = `You are a Canadian Privacy Specialist. You will receive a JSON object with 'company_name', 'user_name', and 'flagged_risks'.
 Your Task: Generate a formal 'Withdrawal of Consent' email.
@@ -18,8 +24,9 @@ export async function generateOptOutEmail(userInfo: {
   companyName: string;
   flaggedRisks: string[];
 }): Promise<{ subject: string; body: string }> {
+  const ai = await getAI();
   const response = await ai.models.generateContentStream({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     config: {
       systemInstruction: [{ text: OPT_OUT_SYSTEM_INSTRUCTION }],
     },

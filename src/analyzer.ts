@@ -1,14 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
-
 import { generateDeleteAccountEmail } from "./prompts/deletionEmail";
 import { generateOptOutEmail } from "./prompts/optOutEmail";
 
-// Use the same Vite-exposed env key as the prompt helpers
-const genAI = new GoogleGenAI({
-  apiKey: "AIzaSyDivzFhkaQ4U3Yk2k4lCfBh7aXmCcBO7TY",
-});
+async function getAI() {
+  return new Promise<GoogleGenAI>((resolve) => {
+    chrome.storage.local.get('geminiApiKey', (result) => {
+      resolve(new GoogleGenAI({ apiKey: result.geminiApiKey as string }));
+    });
+  });
+}
 
 export async function scanTerms(pageText: string) {
+  const ai = await getAI();
   const prompt = `
 Act as an expert Privacy Auditor and Legal Analyst. Analyze the following Terms and Conditions text for hidden legal traps, privacy concerns, and data exploitation clauses.
 Your goal is to extract the legal implications and return them in a strictly structured JSON object.
@@ -22,8 +25,6 @@ Output Format Requirements:
 Return ONLY one JSON object.
 No introductory text, no concluding explanation, no markdown formatting other than the JSON itself.
 The JSON must follow this exact structure:
-code
-JSON
 {
   "optOutEmail": "string",
   "risks": [
@@ -40,24 +41,23 @@ JSON
       "steps": "string"
     }
   ]
-} 
-  The terms and conditions text to analyze is: ${pageText}
+}
+The terms and conditions text to analyze is: ${pageText}
   `;
 
-  const result = await genAI.models.generateContent({
+  const result = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
   });
 
   const text = result.text ?? "";
   const cleaned = text
-  .replace(/```json\n?/g, '')
-  .replace(/```\n?/g, '')
-  .trim();
-return JSON.parse(cleaned);
+    .replace(/```json\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
+  return JSON.parse(cleaned);
 }
 
-// Delete Account Email Generator
 export async function handleDeleteAccount(
   analysis: any,
   userInfo: { userName?: string; userEmail?: string; companyName: string }
@@ -69,7 +69,6 @@ export async function handleDeleteAccount(
   });
 }
 
-// Third Party Opt-Out Email Generator
 export async function handleOptOut(
   analysis: any,
   userInfo: { userName?: string; userEmail?: string; companyName: string }

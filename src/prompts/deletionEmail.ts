@@ -1,6 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyDivzFhkaQ4U3Yk2k4lCfBh7aXmCcBO7TY" })
+async function getAI() {
+  return new Promise<GoogleGenAI>((resolve) => {
+    chrome.storage.local.get('geminiApiKey', (result) => {
+      resolve(new GoogleGenAI({ apiKey: result.geminiApiKey as string }));
+    });
+  });
+}
 
 const DELETE_ACCOUNT_SYSTEM_INSTRUCTION = `You are a Canadian Privacy expert. 
 Write a formal request for 'Personal Information Disposal' under Section 55 
@@ -24,8 +30,9 @@ export async function generateDeleteAccountEmail(userInfo: {
   userEmail?: string;
   companyName: string;
 }): Promise<{ subject: string; body: string }> {
+  const ai = await getAI();
   const response = await ai.models.generateContentStream({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     config: {
       systemInstruction: [{ text: DELETE_ACCOUNT_SYSTEM_INSTRUCTION }],
     },

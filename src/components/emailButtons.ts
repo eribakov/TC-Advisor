@@ -30,12 +30,14 @@ export function showEmailButtons(analysis: any, companyName: string) {
   }
 
   document.getElementById('deleteBtn')?.addEventListener('click', async () => {
-    const email = await handleDeleteAccount(analysis, getUserInfo());
-    window.open(`mailto:${analysis.optOutEmail}?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
-  });
+  const email = await handleDeleteAccount(analysis, getUserInfo());
+  const recipient = analysis.optOutEmail?.includes('@') ? analysis.optOutEmail : '';
+  window.open(`mailto:${recipient}?subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`);
+});
 
-  document.getElementById('optOutBtn')?.addEventListener('click', async () => {
-    const email = await handleOptOut(analysis, getUserInfo());
-    window.open(`mailto:${analysis.optOutEmail}?subject=${email.subject}&body=${encodeURIComponent(email.body)}`);
-  });
+document.getElementById('optOutBtn')?.addEventListener('click', async () => {
+  const email = await handleOptOut(analysis, getUserInfo());
+  const recipient = analysis.optOutEmail?.includes('@') ? analysis.optOutEmail : '';
+  window.open(`mailto:${recipient}?subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`);
+});
 }

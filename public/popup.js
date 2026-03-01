@@ -125,7 +125,7 @@
         if (DOM.scanStatus) DOM.scanStatus.textContent = `✅ Found T&C from: ${response.source}`;
       }
       if (response?.result) {
-        // TODO: parse response.result and call setAdvice with before/after lists
+        showEmailButtons(response.result, DOM.currentDomain.textContent ?? "Unknown");
       }
       if (!response?.result && !response?.error) showDefaultAdvice();
       else if (response?.error) showDefaultAdvice();

@@ -108,31 +108,56 @@
   }
 
   /**
-   * Scan button click — message background to analyze page, then show response and advice.
+   * Scan button click — message content script to scan page, then show response.
    */
   async function onScanClick() {
     if (DOM.scanStatus) DOM.scanStatus.textContent = '';
     setScanning(true);
     try {
       const tab = await getCurrentTab();
+      if (!tab?.id) {
+        if (DOM.scanStatus) DOM.scanStatus.textContent = 'Could not access this tab.';
+        showDefaultAdvice();
+        return;
+      }
       const response = await new Promise((resolve) => {
-        chrome.runtime.sendMessage(
-          { action: 'callGemini', text: tab?.url ?? '', source: undefined },
-          resolve
-        );
+        chrome.tabs.sendMessage(tab.id, { action: 'scan' }, (res) => {
+          resolve(chrome.runtime.lastError ? { error: chrome.runtime.lastError.message } : res);
+        });
       });
       if (response?.source) {
         if (DOM.scanStatus) DOM.scanStatus.textContent = `✅ Found T&C from: ${response.source}`;
       }
       if (response?.result) {
-        // TODO: parse response.result and call setAdvice with before/after lists
+        showScanResult(response.result);
       }
       if (!response?.result && !response?.error) showDefaultAdvice();
-      else if (response?.error) showDefaultAdvice();
+      else if (response?.error) {
+        if (DOM.scanStatus) DOM.scanStatus.textContent = response.error;
+        showDefaultAdvice();
+      }
     } catch (e) {
       showDefaultAdvice();
     } finally {
       setScanning(false);
+    }
+  }
+
+  function showScanResult(result) {
+    try {
+      const data = typeof result === 'string' ? JSON.parse(result) : result;
+      if (data?.risks?.length) {
+        const items = data.risks.map((r) => (r.risk || r.description || '').trim()).filter(Boolean);
+        setAdvice('before', items);
+      }
+      if (data?.ghostMode?.length) {
+        const items = data.ghostMode.map((g) => g.title || g.steps || '').trim().filter(Boolean);
+        setAdvice('after', items);
+      }
+      if (!data?.risks?.length && !data?.ghostMode?.length) showDefaultAdvice();
+    } catch {
+      setAdvice('before', [String(result || 'Analysis complete.')]);
+      showDefaultAdvice();
     }
   }
 

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Smart advice for subscription terms & conditions",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "dist/public/index.html"
   },
   "background": {
     "service_worker": "dist/background.js"

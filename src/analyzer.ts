@@ -5,7 +5,7 @@ import { generateOptOutEmail } from "./prompts/optOutEmail";
 
 // Use the same Vite-exposed env key as the prompt helpers
 const genAI = new GoogleGenAI({
-  apiKey: import.meta.env.VITE_GEMINI_API_KEY ?? "",
+  apiKey: "AIzaSyDivzFhkaQ4U3Yk2k4lCfBh7aXmCcBO7TY",
 });
 
 export async function scanTerms(pageText: string) {
@@ -50,7 +50,11 @@ JSON
   });
 
   const text = result.text ?? "";
-  return JSON.parse(text);
+  const cleaned = text
+  .replace(/```json\n?/g, '')
+  .replace(/```\n?/g, '')
+  .trim();
+return JSON.parse(cleaned);
 }
 
 // Delete Account Email Generator

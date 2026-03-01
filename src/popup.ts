@@ -7,33 +7,33 @@ import { showEmailButtons } from './components/emailButtons';
 
 (function () {
   const DOM = {
-    pageContext: document.getElementById('page-context'),
-    currentDomain: document.getElementById('current-domain'),
-    btnScan: document.getElementById('btn-scan'),
-    scanStatus: document.getElementById('scan-status'),
-    adviceBefore: document.getElementById('advice-before'),
-    placeholderBefore: document.getElementById('placeholder-before'),
-    adviceAfter: document.getElementById('advice-after'),
-    placeholderAfter: document.getElementById('placeholder-after'),
-    btnSettings: document.getElementById('btn-settings'),
-    linkHelp: document.getElementById('link-help'),
+    pageContext: document.getElementById('page-context')!,
+    currentDomain: document.getElementById('current-domain')!,
+    btnScan: document.getElementById('btn-scan')!,
+    scanStatus: document.getElementById('scan-status')!,
+    adviceBefore: document.getElementById('advice-before')!,
+    placeholderBefore: document.getElementById('placeholder-before')!,
+    adviceAfter: document.getElementById('advice-after')!,
+    placeholderAfter: document.getElementById('placeholder-after')!,
+    btnSettings: document.getElementById('btn-settings')!,
+    linkHelp: document.getElementById('link-help')!,
   };
 
   /**
    * Get the current active tab (for popup open in that tab's context).
    */
-  function getCurrentTab() {
-    return new Promise((resolve) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        resolve(tabs[0] || null);
-      });
+  function getCurrentTab(): Promise<chrome.tabs.Tab | null> {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      resolve(tabs[0] || null);
     });
-  }
+  });
+}
 
   /**
    * Derive a short domain label from a URL for display.
    */
-  function getDomainFromUrl(url) {
+  function getDomainFromUrl(url: string) {
     if (!url || url.startsWith('chrome://') || url.startsWith('edge://')) return null;
     try {
       const u = new URL(url);
@@ -48,8 +48,7 @@ import { showEmailButtons } from './components/emailButtons';
    */
   async function updatePageContext() {
     const tab = await getCurrentTab();
-    const domain = tab ? getDomainFromUrl(tab.url) : null;
-    DOM.currentDomain.textContent = domain || '—';
+    const domain = tab ? getDomainFromUrl(tab.url ?? '') : null;    DOM.currentDomain.textContent = domain || '—';
     if (domain) {
       DOM.pageContext.setAttribute('data-state', 'ready');
     } else {
@@ -60,7 +59,7 @@ import { showEmailButtons } from './components/emailButtons';
   /**
    * Set scanning state (for when "Scan this page" runs).
    */
-  function setScanning(scanning) {
+  function setScanning(scanning: boolean) {
     if (DOM.pageContext) DOM.pageContext.setAttribute('data-state', scanning ? 'scanning' : 'ready');
     if (DOM.btnScan) DOM.btnScan.textContent = scanning ? 'Scanning…' : 'Scan this page';
   }
@@ -70,7 +69,7 @@ import { showEmailButtons } from './components/emailButtons';
    * @param { 'before' | 'after' } listId
    * @param { string[] } items - Array of advice text strings
    */
-  function setAdvice(listId, items) {
+  function setAdvice(listId: 'before' | 'after', items: string[]) {
     const list = listId === 'before' ? DOM.adviceBefore : DOM.adviceAfter;
     const placeholder = listId === 'before' ? DOM.placeholderBefore : DOM.placeholderAfter;
 
@@ -122,22 +121,23 @@ import { showEmailButtons } from './components/emailButtons';
         showDefaultAdvice();
         return;
       }
-      const response = await new Promise((resolve) => {
-        chrome.tabs.sendMessage(tab.id, { action: 'scan' }, (res) => {
-          resolve(chrome.runtime.lastError ? { error: chrome.runtime.lastError.message } : res);
+      const response = await new Promise<any>((resolve) => {
+        chrome.tabs.sendMessage(tab.id!, { action: 'scan' }, (res) => {
+          resolve(chrome.runtime.lastError ? { error: chrome.runtime.lastError.message } : res as any);
         });
       });
-      if (response?.source) {
+      console.log('Scan response:', response);
+      if ((response as any)?.source) {
         if (DOM.scanStatus) DOM.scanStatus.textContent = `✅ Found T&C from: ${response.source}`;
       }
-      if (response?.result) {
-        showScanResult(response.result);
-      }
-      if (!response?.result && !response?.error) showDefaultAdvice();
-      else if (response?.error) {
-        if (DOM.scanStatus) DOM.scanStatus.textContent = response.error;
-        showDefaultAdvice();
-      }
+      if ((response as any)?.result) {
+  showScanResult((response as any).result);
+}
+if (!(response as any)?.result && !(response as any)?.error) showDefaultAdvice();
+else if ((response as any)?.error) {
+  if (DOM.scanStatus) DOM.scanStatus.textContent = (response as any).error;
+  showDefaultAdvice();
+}
     } catch (e) {
       showDefaultAdvice();
     } finally {
@@ -145,26 +145,31 @@ import { showEmailButtons } from './components/emailButtons';
     }
   }
 
-  function showScanResult(result) {
-    try {
-      const data = typeof result === 'string' ? JSON.parse(result) : result;
-      if (data?.risks?.length) {
-        const items = data.risks.map((r) => (r.risk || r.description || '').trim()).filter(Boolean);
-        setAdvice('before', items);
-      }
-      if (data?.ghostMode?.length) {
-        const items = data.ghostMode.map((g) => g.title || g.steps || '').trim().filter(Boolean);
-        setAdvice('after', items);
-      }
-      if (!data?.risks?.length && !data?.ghostMode?.length) showDefaultAdvice();
-
-      showEmailButtons(data, DOM.currentDomain.textContent ?? "Unknown");
-
-    } catch {
-      setAdvice('before', [String(result || 'Analysis complete.')]);
-      showDefaultAdvice();
+  function showScanResult(result: any) {
+  console.log('showScanResult called with:', result);
+  try {
+    const data = typeof result === 'string' ? JSON.parse(result) : result;
+    console.log('parsed data:', data);
+    console.log('risks:', data?.risks);
+    console.log('ghostMode:', data?.ghostMode);
+    if (data?.risks?.length) {
+      const items = data.risks.map((r: any) => (r.risk || r.description || '').trim()).filter(Boolean);
+      console.log('risk items:', items);
+      setAdvice('before', items);
     }
+    if (data?.ghostMode?.length) {
+      const items = data.ghostMode.map((g: any) => (g.title || g.steps || '').trim()).filter(Boolean);
+      console.log('ghost items:', items);
+      setAdvice('after', items);
+    }
+    if (!data?.risks?.length && !data?.ghostMode?.length) showDefaultAdvice();
+    showEmailButtons(data, DOM.currentDomain.textContent ?? "Unknown");
+  } catch(e) {
+    console.log('showScanResult error:', e);
+    setAdvice('before', [String(result || 'Analysis complete.')]);
+    showDefaultAdvice();
   }
+}
 
   /**
    * Settings — placeholder for future options page or popup panel.
@@ -182,7 +187,7 @@ import { showEmailButtons } from './components/emailButtons';
     DOM.btnSettings?.addEventListener('click', onSettingsClick);
 
     // Expose for future use (e.g. from background or content script)
-    window.TCAdvisor = {
+    (window as any).TCAdvisor = {
       setAdvice,
       setScanning,
       getCurrentTab,

@@ -3,20 +3,21 @@ import { resolve } from 'path'
 
 export default defineConfig({
   base: './',
-  publicDir: false,
+  publicDir: 'public',
   build: {
     rollupOptions: {
       input: {
-        'index.html': resolve(__dirname, 'public/index.html'),
+        index: resolve(__dirname, 'index.html'),
         content: resolve(__dirname, 'src/content.ts'),
         background: resolve(__dirname, 'src/background.ts'),
       },
       output: {
         entryFileNames: '[name].js',
         assetFileNames: 'assets/[name][extname]',
+        manualChunks: undefined,
       }
     },
-    outDir: 'public/dist',
+    outDir: 'dist',
     emptyOutDir: true,
   }
 })

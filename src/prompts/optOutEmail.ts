@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY ?? "" });
+const ai = new GoogleGenAI({ apiKey: "AIzaSyDivzFhkaQ4U3Yk2k4lCfBh7aXmCcBO7TY" })
 
 const OPT_OUT_SYSTEM_INSTRUCTION = `You are a Canadian Privacy Specialist. You will receive a JSON object with 'company_name', 'user_name', and 'flagged_risks'.
 Your Task: Generate a formal 'Withdrawal of Consent' email.

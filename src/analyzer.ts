@@ -50,3 +50,29 @@ JSON
   const text = result.text ?? "";
   return JSON.parse(text);
 }
+
+// Delete Account Email Generator
+export async function handleDeleteAccount(
+  analysis: any,
+  userInfo: { userName?: string; userEmail?: string; companyName: string }
+) {
+  return await generateDeleteAccountEmail({
+    userName: userInfo.userName,
+    userEmail: userInfo.userEmail,
+    companyName: userInfo.companyName,
+  });
+}
+
+// Third Party Opt-Out Email Generator
+export async function handleOptOut(
+  analysis: any,
+  userInfo: { userName?: string; userEmail?: string; companyName: string }
+) {
+  const flaggedRisks = analysis.risks.map((r: any) => r.risk);
+  return await generateOptOutEmail({
+    userName: userInfo.userName,
+    userEmail: userInfo.userEmail,
+    companyName: userInfo.companyName,
+    flaggedRisks,
+  });
+}

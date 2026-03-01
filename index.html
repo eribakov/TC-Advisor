@@ -1,63 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tackl</title>
   <link rel="stylesheet" href="popup.css">
+  <style>
+    .view { display: none; }
+    .view--active { display: block; }
+    .settings-body { padding: 16px; }
+    .settings-body h2 { margin: 0 0 8px; font-size: 16px; }
+    .settings-body p { font-size: 13px; color: var(--color-text-muted); margin: 0 0 12px; }
+    .settings-body input {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 13px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+    .settings-status { font-size: 13px; color: var(--color-before); min-height: 1.25em; margin-top: 8px; }
+    .back-btn { display: flex; align-items: center; gap: 4px; }
+  </style>
 </head>
-
 <body>
-  <header class="header">
-    <div class="header__brand">
-      <img src = "icons/logo.svg" alt="Tackl logo" witdth = 32 height = 32>
-      <h1 class="header__title">Tackl</h1>
+
+  <!-- Main View -->
+  <div id="view-main" class="view view--active">
+    <header class="header">
+      <div class="header__brand">
+        <img src="icons/logo.svg" alt="Tackl logo" width="32" height="32">
+        <h1 class="header__title">Tackl</h1>
+      </div>
+      <p class="header__tagline">Tackling the fine print, one web page at a time.</p>
+      <div class="header__context" id="page-context" data-state="idle">
+        <span class="context__label">Current page</span>
+        <span class="context__value" id="current-domain">—</span>
+        <button type="button" class="btn btn--primary" id="btn-scan" aria-label="Scan this page for terms">Scan this page</button>
+      </div>
+      <p class="header__status" id="scan-status" aria-live="polite"></p>
+    </header>
+
+    <main class="main">
+      <section class="section section--before" aria-labelledby="before-heading">
+        <h2 id="before-heading" class="section__title">
+          <span class="section__badge section__badge--before">Before</span>
+          Risks
+        </h2>
+        <p class="section__desc">Things to check or do before agreeing to terms on a subscription site.</p>
+        <ul class="advice-list" id="advice-before" role="list">
+          <li class="advice-list__placeholder" id="placeholder-before">Scan the page to get tailored advice, or browse general tips below.</li>
+        </ul>
+      </section>
+
+      <section class="section section--after" aria-labelledby="after-heading">
+        <h2 id="after-heading" class="section__title">
+          <span class="section__badge section__badge--after">After</span>
+          Ghost Mode
+        </h2>
+        <p class="section__desc">Recommended actions once you've agreed to the terms.</p>
+        <ul class="advice-list" id="advice-after" role="list">
+          <li class="advice-list__placeholder" id="placeholder-after">Scan the page to get tailored advice, or browse general tips below.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <button type="button" class="btn btn--ghost" id="btn-settings" aria-label="Open settings">Settings</button>
+      <a href="#" class="footer__link" id="link-help" target="_blank" rel="noopener">Help</a>
+    </footer>
+  </div>
+
+  <!-- Settings View -->
+  <div id="view-settings" class="view">
+    <header class="header">
+      <div class="header__brand">
+        <img src="icons/logo.svg" alt="Tackl logo" width="32" height="32">
+        <h1 class="header__title">Settings</h1>
+      </div>
+    </header>
+
+    <div class="settings-body">
+      <h2>Gemini API Key</h2>
+      <p>Enter your free Gemini API key from <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></p>
+      <input id="api-key-input" type="text" placeholder="AIzaSy..." />
+      <button type="button" class="btn btn--primary" id="save-btn">Save Key</button>
+      <p class="settings-status" id="settings-status"></p>
     </div>
-    <p class="header__tagline">Tackling the fine print, one web page at a time.</p>
-    <div class="header__context" id="page-context" data-state="idle">
-      <span class="context__label">Current page</span>
-      <span class="context__value" id="current-domain">—</span>
-      <button type="button" class="btn btn--primary" id="btn-scan" aria-label="Scan this page for terms">Scan this
-        page</button>
-    </div>
-    <p class="header__status" id="scan-status" aria-live="polite"></p>
-  </header>
 
-  <main class="main">
-    <section class="section section--before" aria-labelledby="before-heading">
-      <h2 id="before-heading" class="section__title">
-        <span class="section__badge section__badge--before">Before</span>
-        Risks
-      </h2>
-      <p class="section__desc">Things to check or do before agreeing to terms on a subscription site.</p>
-      <ul class="advice-list" id="advice-before" role="list">
-        <li class="advice-list__placeholder" id="placeholder-before">Scan the page to get tailored advice, or browse
-          general tips below.</li>
-        <!-- Dynamic advice items will be injected here -->
-      </ul>
-    </section>
-
-    <section class="section section--after" aria-labelledby="after-heading">
-      <h2 id="after-heading" class="section__title">
-        <span class="section__badge section__badge--after">After</span>
-        Ghost Mode
-      </h2>
-      <p class="section__desc">Recommended actions once you've agreed to the terms.</p>
-      <ul class="advice-list" id="advice-after" role="list">
-        <li class="advice-list__placeholder" id="placeholder-after">Scan the page to get tailored advice, or browse
-          general tips below.</li>
-        <!-- Dynamic advice items will be injected here -->
-      </ul>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <button type="button" class="btn btn--ghost" id="btn-settings" aria-label="Open settings">Settings</button>
-    <a href="#" class="footer__link" id="link-help" target="_blank" rel="noopener">Help</a>
-  </footer>
+    <footer class="footer">
+      <button type="button" class="btn btn--ghost back-btn" id="btn-back">← Back</button>
+    </footer>
+  </div>
 
   <script src="./src/popup.ts" type="module"></script>
 </body>
-
 </html>

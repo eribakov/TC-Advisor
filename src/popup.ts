@@ -175,8 +175,30 @@ else if ((response as any)?.error) {
    * Settings — placeholder for future options page or popup panel.
    */
   function onSettingsClick() {
-    chrome.runtime.openOptionsPage();
-  }
+  document.getElementById('view-main')!.classList.remove('view--active');
+  document.getElementById('view-settings')!.classList.add('view--active');
+
+  // Load saved key
+  chrome.storage.local.get('geminiApiKey', (result) => {
+    const input = document.getElementById('api-key-input') as HTMLInputElement;
+    if (result.geminiApiKey) input.value = result.geminiApiKey as string;
+  });
+}
+
+// Add these in your init() function:
+document.getElementById('btn-back')?.addEventListener('click', () => {
+  document.getElementById('view-settings')!.classList.remove('view--active');
+  document.getElementById('view-main')!.classList.add('view--active');
+});
+
+document.getElementById('save-btn')?.addEventListener('click', () => {
+  const input = document.getElementById('api-key-input') as HTMLInputElement;
+  chrome.storage.local.set({ geminiApiKey: input.value.trim() }, () => {
+    const status = document.getElementById('settings-status')!;
+    status.textContent = '✅ Key saved!';
+    setTimeout(() => { status.textContent = ''; }, 2000);
+  });
+});
 
   function init() {
     updatePageContext();

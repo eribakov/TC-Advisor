@@ -1,23 +1,21 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
-
-const entry = process.env.BUILD_ENTRY || 'content';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
 export default defineConfig({
-  publicDir: false,
+  plugins: [react()],
   build: {
-    outDir: 'public/dist',
-    emptyOutDir: entry === 'content',
-    lib: {
-      entry: resolve(__dirname, `src/${entry}.ts`),
-      formats: ['iife'],
-      name: entry === 'content' ? 'ContentScript' : 'BackgroundScript',
-      fileName: () => `${entry}.js`,
-    },
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'public/index.html'),
+        content: resolve(__dirname, 'src/content.ts'),
+        background: resolve(__dirname, 'src/background.ts'),
+      },
       output: {
         entryFileNames: '[name].js',
-      },
+      }
     },
-  },
-});
+    outDir: 'dist',
+    emptyOutDir: true,
+  }
+})

@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { generateDeleteAccountEmail } from './prompts/deletionEmail';
+import { generateOptOutEmail } from './prompts/optOutEmail';
 
 const genAI = new GoogleGenAI({ apiKey: import.meta.env.GEMINI_API_KEY ?? "" });
 
